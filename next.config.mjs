@@ -16,11 +16,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    webpackBuildWorker: true,
-    parallelServerBuildTraces: true,
-    parallelServerCompiles: true,
-  },
+  // Removed experimental features causing warnings
 }
 
 mergeConfig(nextConfig, userConfig)
@@ -46,3 +42,4 @@ function mergeConfig(nextConfig, userConfig) {
 }
 
 export default nextConfig
+

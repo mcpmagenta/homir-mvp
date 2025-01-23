@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Calendar, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Button } from "app/components/ui/button"
+import { Card } from "app/components/ui/card"
 import Map from "./components/map"
 import LocationInput from "./components/location-input"
 import ServiceTypeSelector from "./components/service-type-selector"
