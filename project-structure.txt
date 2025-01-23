@@ -1,0 +1,35 @@
+homir-mvp/
+├── app/
+│   ├── api/
+│   │   ├── auth/
+│   │   │   └── route.ts
+│   │   └── jobs/
+│   │       └── route.ts
+│   ├── components/
+│   │   ├── footer.tsx
+│   │   ├── header.tsx
+│   │   ├── location-input.tsx
+│   │   ├── map.tsx
+│   │   └── service-type-selector.tsx
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   └── ui/
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── dropdown-menu.tsx
+│       ├── input.tsx
+│       └── separator.tsx
+├── lib/
+│   ├── api-utils.ts
+│   ├── auth.ts
+│   └── prisma.ts
+├── prisma/
+│   └── schema.prisma
+├── scripts/
+│   ├── test-connection.ts
+│   └── test-db-connection.ts
+├── package.json
+├── tsconfig.json
+└── next.config.js
+

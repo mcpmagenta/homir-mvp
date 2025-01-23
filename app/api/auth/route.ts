@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server"
-import { PrismaClient } from "@prisma/client"
-import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
+import { db } from "@/lib/mock-db"
 import { createApiResponse, ApiError, handleApiError } from "@/lib/api-utils"
 import { z } from "zod"
 
-const prisma = new PrismaClient()
-
-// Input validation schemas
 const authSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -22,52 +17,38 @@ export async function POST(request: Request) {
 
     if (validated.mode === "register") {
       if (!validated.role) {
-        throw new ApiError("Role is required for registration")
+        throw new ApiError("Role is required for registration", 400)
       }
 
-      const hashedPassword = await bcrypt.hash(validated.password, 10)
-      const user = await prisma.user.create({
+      const existingUser = await db.user.findUnique({
+        where: { email: validated.email },
+      })
+
+      if (existingUser) {
+        throw new ApiError("User already exists", 400)
+      }
+
+      const user = await db.user.create({
         data: {
           email: validated.email,
-          password: hashedPassword,
+          password: validated.password, // In a real app, this should be hashed
           role: validated.role,
         },
-        select: {
-          id: true,
-          email: true,
-          role: true,
-        },
       })
 
-      const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "7d" })
-
-      return NextResponse.json(createApiResponse({ user, token }))
+      return NextResponse.json(createApiResponse({ user }))
     } else {
-      const user = await prisma.user.findUnique({
+      const user = await db.user.findUnique({
         where: { email: validated.email },
-        select: {
-          id: true,
-          email: true,
-          role: true,
-          password: true,
-        },
       })
 
-      if (!user || !(await bcrypt.compare(validated.password, user.password))) {
+      if (!user || user.password !== validated.password) {
         throw new ApiError("Invalid credentials", 401)
       }
 
-      const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: "7d" })
-
-      const { password, ...userWithoutPassword } = user
-      return NextResponse.json(
-        createApiResponse({
-          user: userWithoutPassword,
-          token,
-        }),
-      )
+      return NextResponse.json(createApiResponse({ user }))
     }
-  } catch (error) {
+  } catch (error: unknown) {
     const apiResponse = await handleApiError(error)
     return NextResponse.json(apiResponse, {
       status: error instanceof ApiError ? error.statusCode : 500,

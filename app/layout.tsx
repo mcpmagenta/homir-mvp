@@ -1,14 +1,14 @@
-import "./globals.css"
+import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import Header from "./components/header"
 import Footer from "./components/footer"
-import { Toaster } from "@/components/ui/toaster"
+import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
-  title: "Homir - Connect Caregivers and Care Recipients",
-  description: "Find or offer caregiving services with Homir",
+export const metadata: Metadata = {
+  title: "Homir - Find Care Services Near You",
+  description: "Connect with trusted caregivers for home care, senior care, and child care services.",
 }
 
 export default function RootLayout({
@@ -20,9 +20,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        <main className="min-h-screen p-4 md:p-8">{children}</main>
+        <main className="flex-grow">{children}</main>
         <Footer />
-        <Toaster />
       </body>
     </html>
   )

@@ -1,54 +1,83 @@
 "use client"
 
-import { useState } from "react"
-import { MapPin } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { Loader } from "@googlemaps/js-api-loader"
+import { X } from "lucide-react"
 
 interface LocationInputProps {
-  defaultValue?: string
-  onChange?: (location: string, coordinates?: { lat: number; lng: number }) => void
+  onLocationSelect: (location: { lat: number; lng: number }) => void
+  initialValue?: string
 }
 
-export function LocationInput({ defaultValue = "", onChange }: LocationInputProps) {
-  const [location, setLocation] = useState(defaultValue)
+export default function LocationInput({ onLocationSelect, initialValue = "" }: LocationInputProps) {
+  const [address, setAddress] = useState(initialValue)
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const handleChange = async (value: string) => {
-    setLocation(value)
+  useEffect(() => {
+    const initAutocomplete = async () => {
+      const loader = new Loader({
+        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        version: "weekly",
+        libraries: ["places"],
+      })
 
-    if (onChange) {
       try {
-        const loader = new Loader({
-          apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-          version: "weekly",
-        })
+        const google = await loader.load()
+        if (inputRef.current) {
+          autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
+            fields: ["geometry", "formatted_address"],
+            types: ["address"],
+          })
 
-        const { Geocoder } = await loader.importLibrary("geocoding")
-        const geocoder = new Geocoder()
-
-        const results = await geocoder.geocode({ address: value })
-        if (results.results[0]) {
-          const { lat, lng } = results.results[0].geometry.location
-          onChange(value, { lat: lat(), lng: lng() })
-        } else {
-          onChange(value)
+          autocompleteRef.current.addListener("place_changed", () => {
+            const place = autocompleteRef.current?.getPlace()
+            if (place?.geometry?.location) {
+              setAddress(place.formatted_address || "")
+              onLocationSelect({
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+              })
+            }
+          })
         }
       } catch (error) {
-        onChange(value)
+        console.error("Error initializing Google Places Autocomplete:", error)
       }
+    }
+
+    initAutocomplete()
+  }, [onLocationSelect])
+
+  const clearAddress = () => {
+    setAddress("")
+    if (inputRef.current) {
+      inputRef.current.focus()
     }
   }
 
   return (
     <div className="relative">
-      <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       <Input
+        ref={inputRef}
         type="text"
-        placeholder="Enter your location"
-        value={location}
-        onChange={(e) => handleChange(e.target.value)}
-        className="pl-10"
+        placeholder="Enter pickup location"
+        value={address}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
+        className="pr-10 bg-gray-100 border-none"
       />
+      {address && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+          onClick={clearAddress}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   )
 }

@@ -1,19 +1,3 @@
-export type ApiResponse<T> = {
-  success: boolean
-  data?: T
-  error?: string
-  version: string
-}
-
-export function createApiResponse<T>(data?: T, error?: string): ApiResponse<T> {
-  return {
-    success: !error,
-    data,
-    error,
-    version: "v1",
-  }
-}
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -24,11 +8,26 @@ export class ApiError extends Error {
   }
 }
 
-export async function handleApiError(error: unknown) {
-  if (error instanceof ApiError) {
-    return createApiResponse(undefined, error.message)
+export function createApiResponse<T>(data: T) {
+  return {
+    success: true,
+    data,
   }
+}
+
+export async function handleApiError(error: unknown) {
   console.error("API Error:", error)
-  return createApiResponse(undefined, "Internal server error")
+
+  if (error instanceof ApiError) {
+    return {
+      success: false,
+      error: error.message,
+    }
+  }
+
+  return {
+    success: false,
+    error: "Internal server error",
+  }
 }
 
