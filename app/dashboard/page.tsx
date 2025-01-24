@@ -43,7 +43,7 @@ export default function Dashboard() {
         } else {
           throw new Error(data.message || "Failed to fetch jobs")
         }
-      } catch (error) {
+      } catch (error: any) {
         toast({
           title: "Error",
           description: error.message,
@@ -75,7 +75,7 @@ export default function Dashboard() {
       } else {
         throw new Error(data.message || "Failed to apply for job")
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,

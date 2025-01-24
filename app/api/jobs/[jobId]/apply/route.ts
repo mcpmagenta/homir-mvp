@@ -1,17 +1,13 @@
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 import { PrismaClient } from "@prisma/client"
-import { verifyToken } from "@/lib/auth"
+import { verifyAuth } from "@/lib/auth"
 
 const prisma = new PrismaClient()
 
-export async function POST(request: Request, { params }: { params: { jobId: string } }) {
-  const token = request.headers.get("authorization")?.split(" ")[1]
-  if (!token) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
-  }
-
+export async function POST(request: NextRequest, { params }: { params: { jobId: string } }) {
   try {
-    const decoded = verifyToken(token)
+    const { user, decoded } = await verifyAuth(request)
+
     if (decoded.role !== "CAREGIVER") {
       return NextResponse.json({ message: "Only caregivers can apply for jobs" }, { status: 403 })
     }
@@ -19,13 +15,13 @@ export async function POST(request: Request, { params }: { params: { jobId: stri
     const jobApplication = await prisma.jobApplication.create({
       data: {
         jobId: params.jobId,
-        caregiverId: decoded.userId,
+        caregiverId: user.id,
       },
     })
 
     return NextResponse.json(jobApplication)
   } catch (error) {
-    return NextResponse.json({ message: "Invalid token" }, { status: 401 })
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
   }
 }
 
