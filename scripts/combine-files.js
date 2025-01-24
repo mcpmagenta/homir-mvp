@@ -1,5 +1,9 @@
 import { readdir, readFile, writeFile } from 'fs/promises';
-import { join, relative } from 'path';
+import { join, relative, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 async function getAllFiles(dir) {
   const files = [];
@@ -64,5 +68,6 @@ async function combineFiles(directory) {
   }
 }
 
-// Run the script on the current directory
-combineFiles('.');
+// Run the script on the parent directory of the scripts folder
+const projectRoot = join(__dirname, '..');
+combineFiles(projectRoot);
