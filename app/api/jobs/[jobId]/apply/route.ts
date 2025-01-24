@@ -1,8 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
-import { PrismaClient } from "@prisma/client"
 import { verifyAuth } from "@/lib/auth"
-
-const prisma = new PrismaClient()
+import { prisma } from "@/lib/prisma"
 
 export async function POST(request: NextRequest, { params }: { params: { jobId: string } }) {
   try {
@@ -21,7 +19,11 @@ export async function POST(request: NextRequest, { params }: { params: { jobId: 
 
     return NextResponse.json(jobApplication)
   } catch (error) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    console.error("Error applying for job:", error)
+    if (error instanceof Error && error.message === "Invalid token") {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    }
+    return NextResponse.json({ message: "An error occurred while applying for the job" }, { status: 500 })
   }
 }
 
