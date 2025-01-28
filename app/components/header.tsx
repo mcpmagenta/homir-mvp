@@ -30,10 +30,10 @@ export function Header() {
                 Find Care
               </Link>
               <Link
-                href="/jobs"
-                className={`text-sm ${pathname === "/jobs" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                href="/become-caregiver"
+                className={`text-sm ${pathname === "/become-caregiver" ? "text-primary font-medium" : "text-muted-foreground"}`}
               >
-                Jobs
+                Become a caregiver
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
