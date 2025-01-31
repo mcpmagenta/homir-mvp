@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Separator } from "./ui/separator"
+import { Separator } from "@/components/ui/separator"
 
 const footerLinks = {
   company: [
@@ -29,7 +29,8 @@ const footerLinks = {
   ],
 }
 
-export function Footer() {
+// Changed to default export to match the import in layout.tsx
+export default function Footer() {
   return (
     <footer className="bg-background border-t">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">

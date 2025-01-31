@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
 interface SignupOverlayProps {
@@ -12,6 +12,7 @@ interface SignupOverlayProps {
 }
 
 export function SignupOverlay({ isOpen, onClose }: SignupOverlayProps) {
+  console.log("SignupOverlay rendered, isOpen:", isOpen)
   const [selectedRole, setSelectedRole] = useState<"caregiver" | "recipient" | null>(null)
 
   return (
@@ -40,14 +41,23 @@ export function SignupOverlay({ isOpen, onClose }: SignupOverlayProps) {
             )}
           >
             <div className="w-16 h-16 rounded-full bg-[#407A59]/10 flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-[#407A59]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="text-[#407A59]"
+              >
+                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35" />
+                <circle cx="11" cy="11" r="8" strokeWidth="1.5" />
                 <path
+                  strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+                  transform="translate(0 0)"
+                  d="M11 8.75c0.8-0.8 2.2-0.8 3 0s0.8 2.2 0 3l-3 3-3-3c-0.8-0.8-0.8-2.2 0-3s2.2-0.8 3 0"
                 />
-                <circle cx="12" cy="7" r="4" />
               </svg>
             </div>
             <h3 className="text-lg font-semibold mb-2">Looking for care</h3>
@@ -66,13 +76,16 @@ export function SignupOverlay({ isOpen, onClose }: SignupOverlayProps) {
             )}
           >
             <div className="w-16 h-16 rounded-full bg-[#407A59]/10 flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-[#407A59]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                />
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="text-[#407A59]"
+              >
+                <circle cx="12" cy="8" r="4" strokeWidth="1.5" />
+                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M6 21v-2a6 6 0 0 1 12 0v2" />
               </svg>
             </div>
             <h3 className="text-lg font-semibold mb-2">Become a caregiver</h3>
