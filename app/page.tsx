@@ -1,74 +1,93 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Calendar, Clock } from "lucide-react"
-import { Button } from "app/components/ui/button"
-import { Card } from "app/components/ui/card"
-import Map from "./components/map"
+import { useState } from "react"
+import CustomDatepicker from "@/components/custom-datepicker"
+import MapboxMap from "./components/mapbox-map"
 import LocationInput from "./components/location-input"
 import ServiceTypeSelector from "./components/service-type-selector"
+import { SeePricesButton } from "@/components/ui/see-prices-button"
+import { TimePicker } from "@/components/time-picker"
+import dayjs from "dayjs"
+
+const DEFAULT_LOCATION = { lat: 44.9778, lng: -93.265 }
 
 export default function Home() {
-  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number }>({
-    lat: 44.9778,
-    lng: -93.265,
-  })
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number; address?: string } | null>(
+    DEFAULT_LOCATION,
+  )
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedTime, setSelectedTime] = useState<string | null>("Now")
+  const [isToday, setIsToday] = useState(true)
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          })
-          setSelectedLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          })
-        },
-        (error) => {
-          console.error("Error getting user location:", error)
-        },
-      )
+  const handleLocationSelect = (location: { lat: number; lng: number; address?: string } | null) => {
+    setSelectedLocation(location)
+  }
+
+  const handleDateChange = (date: Date | null, isToday: boolean) => {
+    setSelectedDate(date)
+    setIsToday(isToday)
+    if (!date) {
+      setSelectedTime(null)
+    } else if (isToday) {
+      const now = dayjs()
+      const nextAvailableTime = now.minute() < 30 ? now.minute(30) : now.add(1, "hour").minute(0)
+      setSelectedTime(nextAvailableTime.format("h:mm A"))
+    } else {
+      setSelectedTime("12:00 PM")
     }
-  }, [])
+  }
+
+  const handleTimeChange = (time: string | null, date: Date | null) => {
+    setSelectedTime(time)
+    if (date) {
+      setSelectedDate(date)
+    }
+  }
 
   return (
-    <div className="container mx-auto flex min-h-[calc(100vh-64px)]">
-      {/* Left Section */}
-      <div className="w-[450px] p-8 flex flex-col">
-        <h1 className="text-4xl font-bold mb-6">Care anywhere with Homir</h1>
+    <main className="container mx-auto px-4 py-6 md:py-8">
+      <div className="flex flex-col md:grid md:grid-cols-[1fr,1fr] lg:grid-cols-[450px,1fr] gap-6 lg:gap-[150px] max-w-[1200px] mx-auto">
+        <div className="w-full max-w-[450px] mx-auto md:mx-0 lg:max-w-none">
+          <h1 className="text-[40px] leading-[1.1] font-bold mb-12">Home care anywhere with Homir</h1>
 
-        <ServiceTypeSelector />
+          <ServiceTypeSelector />
 
-        <Card className="p-4 mt-6">
-          <LocationInput
-            onLocationSelect={(location: { lat: number; lng: number }) => setSelectedLocation(location)}
-            initialValue={userLocation ? `${userLocation.lat}, ${userLocation.lng}` : ""}
-          />
+          <div className="mt-12 space-y-4">
+            <LocationInput onLocationSelect={handleLocationSelect} initialValue={selectedLocation?.address || ""} />
 
-          <div className="mt-4 grid grid-cols-2 gap-4">
-            <Button variant="outline" className="w-full justify-start">
-              <Calendar className="mr-2 h-4 w-4" />
-              Today
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Clock className="mr-2 h-4 w-4" />
-              Now
-            </Button>
+            <div className="grid grid-cols-2 gap-4">
+              <CustomDatepicker
+                onChange={handleDateChange}
+                onClear={() => {
+                  setSelectedDate(null)
+                  setSelectedTime("Now")
+                }}
+                selectedDate={selectedDate}
+              />
+              <TimePicker
+                selectedDate={selectedDate}
+                isToday={isToday}
+                onChange={handleTimeChange}
+                containerClassName="w-full"
+                buttonClassName="time-picker-button"
+                dropdownClassName="time-picker-dropdown"
+                optionClassName="time-picker-option"
+              />
+            </div>
+
+            <div className="w-full">
+              <SeePricesButton className="w-[30%]">See prices</SeePricesButton>
+            </div>
           </div>
+        </div>
 
-          <Button className="w-full mt-4">See prices</Button>
-        </Card>
+        <div className="w-full h-[400px] md:h-[calc(100vh-200px)] lg:h-auto lg:aspect-square max-w-none md:max-w-none lg:max-w-[500px] lg:max-h-[500px] mx-auto lg:ml-0 mt-6 md:mt-0">
+          <div className="w-full h-full rounded-lg overflow-hidden">
+            <MapboxMap center={selectedLocation || DEFAULT_LOCATION} zoom={14} selectedLocation={selectedLocation} />
+          </div>
+        </div>
       </div>
-
-      {/* Right Section - Map */}
-      <div className="flex-1">
-        <Map center={selectedLocation} zoom={14} onLocationChange={setSelectedLocation} userLocation={userLocation} />
-      </div>
-    </div>
+    </main>
   )
 }
 
