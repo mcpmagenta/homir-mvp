@@ -1,12 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import CustomDatepicker from "@/components/custom-datepicker"
 import MapboxMap from "./components/mapbox-map"
 import LocationInput from "./components/location-input"
 import ServiceTypeSelector from "./components/service-type-selector"
 import { SeePricesButton } from "@/components/ui/see-prices-button"
 import { TimePicker } from "@/components/time-picker"
+import { HowItWorksSection } from "./components/how-it-works-section"
+import { NurseSignupSection } from "./components/nurse-signup-section"
+import { SafetySection } from "./components/safety-section"
 import dayjs from "dayjs"
 
 const DEFAULT_LOCATION = { lat: 44.9778, lng: -93.265 }
@@ -20,6 +23,7 @@ export default function Home() {
   const [isToday, setIsToday] = useState(true)
 
   const handleLocationSelect = (location: { lat: number; lng: number; address?: string } | null) => {
+    console.log("Location selected:", location)
     setSelectedLocation(location)
   }
 
@@ -44,50 +48,62 @@ export default function Home() {
     }
   }
 
+  useEffect(() => {
+    console.log("Selected location updated:", selectedLocation)
+  }, [selectedLocation])
+
   return (
-    <main className="container mx-auto px-4 py-6 md:py-8">
-      <div className="flex flex-col md:grid md:grid-cols-[1fr,1fr] lg:grid-cols-[450px,1fr] gap-6 lg:gap-[150px] max-w-[1200px] mx-auto">
-        <div className="w-full max-w-[450px] mx-auto md:mx-0 lg:max-w-none">
-          <h1 className="text-[40px] leading-[1.1] font-bold mb-12">Home care anywhere with Homir</h1>
+    <>
+      <section className="container mx-auto px-4 py-12 md:py-16">
+        <div className="flex flex-col md:grid md:grid-cols-[1fr,1fr] lg:grid-cols-[450px,1fr] gap-6 lg:gap-[150px] max-w-[1200px] mx-auto">
+          <div className="w-full max-w-[450px] mx-auto md:mx-0 lg:max-w-none">
+            <h1 className="text-[40px] leading-[1.1] font-bold mb-12">Home care anywhere with Homir</h1>
 
-          <ServiceTypeSelector />
+            <ServiceTypeSelector />
 
-          <div className="mt-12 space-y-4">
-            <LocationInput onLocationSelect={handleLocationSelect} initialValue={selectedLocation?.address || ""} />
+            <div className="mt-12 space-y-4">
+              <LocationInput onLocationSelect={handleLocationSelect} initialValue={selectedLocation?.address || ""} />
 
-            <div className="grid grid-cols-2 gap-4">
-              <CustomDatepicker
-                onChange={handleDateChange}
-                onClear={() => {
-                  setSelectedDate(null)
-                  setSelectedTime("Now")
-                }}
-                selectedDate={selectedDate}
-              />
-              <TimePicker
-                selectedDate={selectedDate}
-                isToday={isToday}
-                onChange={handleTimeChange}
-                containerClassName="w-full"
-                buttonClassName="time-picker-button"
-                dropdownClassName="time-picker-dropdown"
-                optionClassName="time-picker-option"
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <CustomDatepicker
+                  onChange={handleDateChange}
+                  onClear={() => {
+                    setSelectedDate(null)
+                    setSelectedTime("Now")
+                  }}
+                  selectedDate={selectedDate}
+                />
+                <TimePicker
+                  selectedDate={selectedDate}
+                  isToday={isToday}
+                  onChange={handleTimeChange}
+                  containerClassName="w-full"
+                  buttonClassName="time-picker-button"
+                  dropdownClassName="time-picker-dropdown"
+                  optionClassName="time-picker-option"
+                />
+              </div>
+
+              <div className="w-full">
+                <SeePricesButton className="w-[30%]">See prices</SeePricesButton>
+              </div>
             </div>
+          </div>
 
-            <div className="w-full">
-              <SeePricesButton className="w-[30%]">See prices</SeePricesButton>
+          <div className="w-full h-[400px] md:h-[calc(100vh-200px)] lg:h-auto lg:aspect-square max-w-none md:max-w-none lg:max-w-[500px] lg:max-h-[500px] mx-auto lg:ml-0 mt-6 md:mt-0">
+            <div className="w-full h-full rounded-lg overflow-hidden">
+              <MapboxMap center={selectedLocation || DEFAULT_LOCATION} zoom={14} selectedLocation={selectedLocation} />
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="w-full h-[400px] md:h-[calc(100vh-200px)] lg:h-auto lg:aspect-square max-w-none md:max-w-none lg:max-w-[500px] lg:max-h-[500px] mx-auto lg:ml-0 mt-6 md:mt-0">
-          <div className="w-full h-full rounded-lg overflow-hidden">
-            <MapboxMap center={selectedLocation || DEFAULT_LOCATION} zoom={14} selectedLocation={selectedLocation} />
-          </div>
-        </div>
+      <div className="space-y-0">
+        <HowItWorksSection />
+        <NurseSignupSection />
+        <SafetySection />
       </div>
-    </main>
+    </>
   )
 }
 

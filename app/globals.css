@@ -20,7 +20,7 @@
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.2% 46.9%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
@@ -356,5 +356,74 @@ button:focus-visible {
     padding-left: 24px;
     padding-right: 24px;
   }
+}
+
+.sign-up-link {
+  position: relative;
+  color: black;
+  text-decoration: none;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+.sign-up-link::after,
+.sign-up-link::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px; /* Change from 2px to 1px */
+}
+
+.sign-up-link::after {
+  background-color: #cbcbcb;
+  z-index: 1;
+}
+
+.sign-up-link::before {
+  background-color: black;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease-out;
+  z-index: 2;
+}
+
+.sign-up-link:hover::before {
+  transform: scaleX(1);
+}
+
+/* Add these new animation classes to your existing globals.css */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes float-delayed {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 6s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
