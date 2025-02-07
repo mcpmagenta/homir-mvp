@@ -46,7 +46,7 @@ export default function Header() {
                   <div className="relative">
                     <DropdownMenuContent
                       align="start"
-                      sideOffset={11.75}
+                      sideOffset={13}
                       className="w-56 p-0 bg-white border shadow-lg rounded-none rounded-b-xl"
                     >
                       <div>
@@ -58,21 +58,21 @@ export default function Header() {
                           </DropdownMenuItem>
                         </div>
                         <div className="hover:bg-[#f1f1f1] transition-colors">
-                          <DropdownMenuItem asChild className="focus:bg-transparent">
+                          <DropdownMenuItem asChild className="rounded-none focus:bg-transparent">
                             <Link href="/blog" className="w-full px-4 py-2.5 block text-base">
                               Blog
                             </Link>
                           </DropdownMenuItem>
                         </div>
                         <div className="hover:bg-[#f1f1f1] transition-colors">
-                          <DropdownMenuItem asChild className="focus:bg-transparent">
+                          <DropdownMenuItem asChild className="rounded-none focus:bg-transparent">
                             <Link href="/our-offerings" className="w-full px-4 py-2.5 block text-base">
                               Our offerings
                             </Link>
                           </DropdownMenuItem>
                         </div>
                         <div className="hover:bg-[#f1f1f1] transition-colors">
-                          <DropdownMenuItem asChild className="focus:bg-transparent">
+                          <DropdownMenuItem asChild className="rounded-none focus:bg-transparent">
                             <Link href="/how-it-works" className="w-full px-4 py-2.5 block text-base">
                               How Homir works
                             </Link>

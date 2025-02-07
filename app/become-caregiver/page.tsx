@@ -1,12 +1,10 @@
 "use client"
-
-import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Home, Heart, Baby, Calendar, ArrowRight, Clock, Shield, Briefcase } from "lucide-react"
+import { Heart, Baby, Calendar, ArrowRight, Shield, Briefcase } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 export default function BecomeCaregiver() {
@@ -14,7 +12,7 @@ export default function BecomeCaregiver() {
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-[#407A59]/5 py-16 md:py-24">
-        <div className="container px-4 md:px-6">
+        <div className="container px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
           <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
             <div className="flex flex-col justify-center space-y-4">
               <div className="space-y-2">
@@ -49,23 +47,12 @@ export default function BecomeCaregiver() {
       {/* Service Types Section */}
       <section className="py-12 md:py-16">
         <div className="container px-4 md:px-6">
-          <h2 className="text-2xl font-bold text-center mb-4">One platform, so many ways to earn</h2>
-          <p className="text-center text-gray-500 mb-8">
-            All care services are provided through our platform, making it easy to find work that fits your schedule
+          <h2 className="text-2xl font-bold text-center mb-4">Make a Difference, One Family at a Time</h2>
+          <p className="text-center text-gray-500 mb-8 max-w-3xl mx-auto">
+            With Homir, you choose how you care. Whether supporting seniors or nurturing children, you'll find flexible,
+            rewarding opportunities that fit your skills and schedule.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Card className="relative overflow-hidden transition-all hover:shadow-lg">
-              <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
-                <div className="p-3 bg-[#407A59]/10 rounded-full">
-                  <Home className="w-8 h-8 text-[#407A59]" />
-                </div>
-                <h3 className="font-semibold text-xl">Home Care</h3>
-                <p className="text-sm text-gray-500">
-                  Provide essential support services to help families maintain a comfortable home environment.
-                </p>
-              </CardContent>
-            </Card>
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             <Card className="relative overflow-hidden transition-all hover:shadow-lg">
               <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
                 <div className="p-3 bg-[#407A59]/10 rounded-full">
@@ -73,7 +60,8 @@ export default function BecomeCaregiver() {
                 </div>
                 <h3 className="font-semibold text-xl">Senior Care</h3>
                 <p className="text-sm text-gray-500">
-                  Help seniors maintain their independence and enjoy a higher quality of life.
+                  Help older adults maintain their independent and quality of life by providing companionship, mobility
+                  support, and daily assistance in the comfort of their homes.
                 </p>
               </CardContent>
             </Card>
@@ -85,7 +73,8 @@ export default function BecomeCaregiver() {
                 </div>
                 <h3 className="font-semibold text-xl">Child Care</h3>
                 <p className="text-sm text-gray-500">
-                  Create safe, nurturing environments for children to grow and thrive.
+                  Create a safe, nurturing space for children to learn and grow. From babysitting to specialized care,
+                  you'll provide families with the support they need.
                 </p>
               </CardContent>
             </Card>
@@ -444,7 +433,9 @@ export default function BecomeCaregiver() {
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible>
               <AccordionItem value="item-1">
-                <AccordionTrigger>What types of jobs are available on Homir?</AccordionTrigger>
+                <AccordionTrigger className="hover:no-underline text-left">
+                  What types of jobs are available on Homir?
+                </AccordionTrigger>
                 <AccordionContent>
                   Homir offers a variety of caregiving jobs, including home care, senior care, and child care. Whether
                   you're looking for part-time, full-time, or one-time gigs, there's a wide range of opportunities to
@@ -452,7 +443,9 @@ export default function BecomeCaregiver() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
-                <AccordionTrigger>Do I need caregiving experience?</AccordionTrigger>
+                <AccordionTrigger className="hover:no-underline text-left">
+                  Do I need caregiving experience?
+                </AccordionTrigger>
                 <AccordionContent>
                   No caregiving experience? No problem! Homir welcomes caregivers at all levels. For those new to
                   caregiving, the platform offers resources and support to help you get started. Experienced caregivers
@@ -460,7 +453,7 @@ export default function BecomeCaregiver() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-3">
-                <AccordionTrigger>How does payment work?</AccordionTrigger>
+                <AccordionTrigger className="hover:no-underline text-left">How does payment work?</AccordionTrigger>
                 <AccordionContent>
                   Payments are handled securely through the Homir platform. You'll know your earnings upfront before
                   accepting a job, and there are flexible withdrawal options to transfer funds to your account. Homir
@@ -468,14 +461,18 @@ export default function BecomeCaregiver() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-4">
-                <AccordionTrigger>How do I find jobs in my area?</AccordionTrigger>
+                <AccordionTrigger className="hover:no-underline text-left">
+                  How do I find jobs in my area?
+                </AccordionTrigger>
                 <AccordionContent>
                   Homir makes it easy to find jobs near you. Use location filters to browse opportunities in your area
                   and set up job alerts to get notified about new postings that match your preferences.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-5">
-                <AccordionTrigger>What safety measures does Homir offer for caregivers?</AccordionTrigger>
+                <AccordionTrigger className="hover:no-underline text-left">
+                  What safety measures does Homir offer for caregivers?
+                </AccordionTrigger>
                 <AccordionContent>
                   Your safety is Homir's top priority. All families are verified, and in-app messaging keeps your
                   personal information private. Homir also offers 24/7 support, background checks, and optional

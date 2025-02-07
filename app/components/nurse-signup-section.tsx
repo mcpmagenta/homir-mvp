@@ -59,7 +59,7 @@ export function NurseSignupSection() {
               </div>
             </div>
 
-            <div className="mt-12 flex items-center gap-4">
+            <div className="mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <Button className="h-[52px] px-8 text-base bg-black hover:bg-black/90 text-white rounded-xl font-medium">
                 Get started
               </Button>

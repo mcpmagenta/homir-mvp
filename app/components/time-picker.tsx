@@ -14,14 +14,22 @@ interface TimePickerProps {
   optionClassName?: string
 }
 
-const generateTimeOptions = (isToday: boolean, currentTime: dayjs.Dayjs) => {
-  const options: string[] = []
-  let startTime = isToday ? currentTime.add(30 - (currentTime.minute() % 30), "minute") : dayjs().startOf("day")
-  const endTime = dayjs().endOf("day")
+const generateTimeOptions = (isToday: boolean) => {
+  const now = dayjs()
+  const options = []
 
-  while (startTime.isBefore(endTime) || startTime.isSame(endTime)) {
-    options.push(startTime.format("h:mm A"))
-    startTime = startTime.add(30, "minute")
+  if (isToday) {
+    let nextTime = now.minute() < 30 ? now.startOf("hour").add(30, "minute") : now.startOf("hour").add(1, "hour")
+    while (nextTime.isBefore(now.endOf("day"))) {
+      options.push(nextTime.format("h:mm A"))
+      nextTime = nextTime.add(30, "minute")
+    }
+  } else {
+    let startTime = now.startOf("day")
+    while (startTime.isBefore(now.endOf("day"))) {
+      options.push(startTime.format("h:mm A"))
+      startTime = startTime.add(30, "minute")
+    }
   }
 
   return options
@@ -43,84 +51,99 @@ export function TimePicker({
 }: TimePickerProps) {
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const [timeOptions, setTimeOptions] = useState<string[]>([])
 
+  const updateDropdownPosition = useCallback(() => {
+    if (buttonRef.current && dropdownRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect()
+      dropdownRef.current.style.top = `${buttonRect.height}px`
+      dropdownRef.current.style.bottom = "auto"
+      dropdownRef.current.style.maxHeight = "240px" // Consistent height
+    }
+  }, [])
+
   useEffect(() => {
-    const currentTime = dayjs()
-    const options = generateTimeOptions(isToday, currentTime)
+    setTimeOptions(generateTimeOptions(isToday))
+
     if (selectedDate) {
       if (isToday) {
-        const nextAvailableTime = getNextAvailableTime(currentTime)
-        const formattedTime = nextAvailableTime.format("h:mm A")
-        setSelectedTime(formattedTime)
-        setTimeOptions(["Now", ...options])
+        const currentTime = dayjs()
+        setSelectedTime(getNextAvailableTime(currentTime).format("h:mm A"))
       } else {
         setSelectedTime("12:00 PM")
-        setTimeOptions(options)
       }
     } else {
       setSelectedTime(null)
-      setTimeOptions(["Now", ...options])
     }
   }, [selectedDate, isToday])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false)
       }
     }
 
+    const handleResizeAndScroll = () => {
+      if (isOpen) {
+        updateDropdownPosition()
+      }
+    }
+
     document.addEventListener("mousedown", handleClickOutside)
+    window.addEventListener("resize", handleResizeAndScroll)
+    window.addEventListener("scroll", handleResizeAndScroll, true)
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
+      window.removeEventListener("resize", handleResizeAndScroll)
+      window.removeEventListener("scroll", handleResizeAndScroll, true)
     }
+  }, [isOpen, updateDropdownPosition])
+
+  const toggleTimeDropdown = useCallback(() => {
+    setIsOpen((prevIsOpen) => !prevIsOpen)
   }, [])
 
-  const toggleTimeDropdown = () => {
-    setIsOpen(!isOpen)
-  }
+  useEffect(() => {
+    if (isOpen) {
+      updateDropdownPosition()
+    }
+  }, [isOpen, updateDropdownPosition])
+
+  useEffect(() => {
+    if (isOpen && dropdownRef.current && selectedTime) {
+      const selectedElement = dropdownRef.current.querySelector(`[data-time="${selectedTime}"]`) as HTMLElement
+      if (selectedElement) {
+        const containerRect = dropdownRef.current.getBoundingClientRect()
+        const elementRect = selectedElement.getBoundingClientRect()
+        const scrollOffset = elementRect.top - containerRect.top - containerRect.height / 2 + elementRect.height / 2
+        dropdownRef.current.scrollTop = scrollOffset
+      }
+    }
+  }, [isOpen, selectedTime])
 
   const handleTimeSelect = (time: string) => {
     const newSelectedTime = time === "Now" ? null : time
     setSelectedTime(newSelectedTime)
     setIsOpen(false)
     onChange(newSelectedTime, selectedDate)
-    setTimeout(() => scrollToSelectedTime(), 0)
   }
 
-  const scrollToSelectedTime = useCallback(() => {
-    if (dropdownRef.current && selectedTime) {
-      const selectedElement = dropdownRef.current.querySelector(`[data-time="${selectedTime}"]`)
-      if (selectedElement) {
-        selectedElement.scrollIntoView({ block: "center", behavior: "auto" })
-      }
-    }
-  }, [selectedTime])
-
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(scrollToSelectedTime, 0)
-    }
-  }, [isOpen, scrollToSelectedTime])
-
   return (
-    <div className={`relative w-full ${containerClassName}`}>
+    <div ref={containerRef} className={`relative w-full ${containerClassName}`}>
       <button
         ref={buttonRef}
         onClick={toggleTimeDropdown}
         type="button"
         className={`
-          flex items-center w-full h-[52px] px-3 text-[16px] rounded-[12px] cursor-pointer transition-colors
+          flex items-center w-full h-[52px] px-3 text-[16px] rounded-[12px] cursor-pointer transition-all
           ${isOpen ? "bg-white border-2 border-black" : "bg-[#F3F3F3] hover:bg-[#EAEAEA] border-2 border-transparent"}
           ${selectedTime ? "text-black" : "text-[#5E5E5E]"}
+          ${buttonClassName}
         `}
       >
         <Clock className="h-5 w-5 text-black mr-3" />
@@ -131,12 +154,10 @@ export function TimePicker({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className={`
-            absolute z-50 w-full bg-white rounded-[12px] shadow-lg mt-2 overflow-auto
-            ${dropdownClassName}
-          `}
+          className={`absolute left-0 w-full z-50 bg-white rounded-[12px] shadow-lg ${dropdownClassName}`}
           style={{
             maxHeight: "240px",
+            overflowY: "auto",
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
           }}
         >

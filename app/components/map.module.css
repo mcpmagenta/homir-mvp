@@ -20,12 +20,12 @@
 }
 
 /* Custom marker styles */
-.selected-location-marker {
+.selectedLocationMarker {
   width: 24px;
   height: 24px;
 }
 
-.marker-container {
+.markerContainer {
   width: 14px;
   height: 14px;
   background: #000000;
@@ -37,7 +37,7 @@
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
-.marker-dot {
+.markerDot {
   width: 4px;
   height: 4px;
   background: #ffffff;
@@ -45,7 +45,7 @@
 }
 
 /* Label styles */
-.selected-location-label {
+.selectedLocationLabel {
   position: absolute;
   top: -12px;
   left: 50%;
@@ -58,7 +58,7 @@
   z-index: 1;
 }
 
-.label-content {
+.labelContent {
   display: flex;
   align-items: center;
   gap: 6px;

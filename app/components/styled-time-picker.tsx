@@ -6,6 +6,7 @@ interface StyledTimePickerProps {
   onChange: (time: string | null, date: Date | null) => void
   containerClassName?: string
   buttonClassName?: string
+  isToday: boolean
 }
 
 export const StyledTimePicker: React.FC<StyledTimePickerProps> = ({
@@ -13,13 +14,16 @@ export const StyledTimePicker: React.FC<StyledTimePickerProps> = ({
   onChange,
   containerClassName,
   buttonClassName,
+  isToday,
 }) => {
   return (
     <TimePicker
       selectedDate={selectedDate}
       onChange={onChange}
       containerClassName={containerClassName}
-      buttonClassName={buttonClassName} isToday={false}    />
+      buttonClassName={buttonClassName}
+      isToday={isToday}
+    />
   )
 }
 
